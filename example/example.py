@@ -39,8 +39,8 @@ if __name__ == "__main__":
     test_schedule_algorithm(FCFS, dataset)
 
     # Direct plotting of SJF
-    scheduled_data = SJF.function(dataset)
     print(f"Plotting {SJF.name} algorithm")
+    scheduled_data = SJF.function(dataset)
     plot(SJF.name, scheduled_data)
             
     # Plot RoundRobin

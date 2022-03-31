@@ -19,6 +19,7 @@ from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 def run(processes: List[Process]) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
+    wait_time = 0
 
     processes_copy = copy(processes)
 
@@ -46,7 +47,11 @@ def run(processes: List[Process]) -> Dict[str, List[Tuple[int, int]]]:
         # Run it
         out[process.id] = [(time_now, time_now+process.duration)]
 
+        wait_time += time_now-process.start
+
         time_now += process.duration
+    
+    print(f"Average wait time is {wait_time/len(processes)}")
 
     return out
     
