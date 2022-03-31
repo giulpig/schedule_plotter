@@ -10,7 +10,7 @@ __license__ = "GPLv3"
 from queue import PriorityQueue
 from collections import deque
 
-from SchedulerPlotter.Process import Process
+from schedule_plotter.Process import Process
 
 
 class PriorityQueueWrapper:

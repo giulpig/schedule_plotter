@@ -11,7 +11,7 @@ import matplotlib.figure
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-from SchedulerPlotter.Algorithm import Algorithm, Process
+from schedule_plotter.Algorithm import Algorithm, Process
 from typing import List, Tuple, Dict
 
 

@@ -11,10 +11,9 @@
 __author__ = "giulpig"
 __license__ = "GPLv3"
 
-from typing import List
 import sys
 
-from SchedulerPlotter import Process, plot, test_schedule_algorithm
+from schedule_plotter import Process, plot, test_schedule_algorithm
 
 from Implementations.FCFS import FCFS
 from Implementations.SJF import SJF

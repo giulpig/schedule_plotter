@@ -1,7 +1,7 @@
 """
     SJF.py
     Implementation of the ShortestJobFirst scheduling algorithm
-    using the SchedulerPlotter packcage
+    using the schedule_plotter packcage
 """
 
 __author__ = "giulpig"
@@ -10,9 +10,9 @@ __license__ = "GPLv3"
 from typing import Dict, List, Tuple
 from copy import copy
 
-from SchedulerPlotter.Algorithm import Algorithm
-from SchedulerPlotter.Process import Process
-from SchedulerPlotter.PriorityQueueWrapper import PriorityQueueWrapper
+from schedule_plotter.Algorithm import Algorithm
+from schedule_plotter.Process import Process
+from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
 
 

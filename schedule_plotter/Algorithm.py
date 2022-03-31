@@ -8,7 +8,7 @@ __author__ = "giulpig"
 __license__ = "GPLv3"
 
 from typing import Dict, List, Tuple
-from SchedulerPlotter.Process import Process
+from schedule_plotter.Process import Process
 
 class Algorithm:
     def __init__(self, name: str, function):
