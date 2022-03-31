@@ -1,4 +1,4 @@
-# Schedule-Plotter
+# schedule_plotter
 A library to visualize scheduling algorithms, it can take .csv file 
 input (see example/input.csv) or it can generate a random dataset
 
