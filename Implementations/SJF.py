@@ -25,30 +25,25 @@ def run(processes: List[Process]) -> Dict[str, List[Tuple[int, int]]]:
     # FIFO queue
     running_queue = PriorityQueueWrapper(sortBy="duration")
 
-    # Insert initial processes in queue
-    for proc in processes:
-        if proc.start == 0:
-            running_queue.put(proc)
-            processes_copy.remove(proc)
-
     while len(processes_copy)>0 or len(running_queue)>0:
         
-        if len(running_queue) == 0:
-            time_now += 1
-            continue
-
-        # Get the process
-        process = running_queue.get()
-
-        # Run it
-        out[process.id] = [(time_now, time_now+process.duration)]
-
         # Insert new processes in queue
-        for _ in range(time_now+1, time_now+process.duration+1):
+        while True:
             for proc in processes_copy[:]:
                 if proc.start <= time_now:
                     running_queue.put(proc)
                     processes_copy.remove(proc)
+
+            if len(running_queue) > 0:
+                break
+            
+            time_now += 1
+
+        # Get the process
+        process = running_queue.pop()
+
+        # Run it
+        out[process.id] = [(time_now, time_now+process.duration)]
 
         time_now += process.duration
 

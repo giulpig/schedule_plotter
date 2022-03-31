@@ -12,6 +12,7 @@ from typing import Dict, List, Tuple
 
 from SchedulerPlotter.Algorithm import Algorithm
 from SchedulerPlotter.Process import Process
+from SchedulerPlotter.PriorityQueueWrapper import PriorityQueueWrapper
 
 # See interface in Algoritm class
 def run(processes: List[Process], quantum: int = 1) -> Dict[str, List[Tuple[int, int]]]:
@@ -21,34 +22,40 @@ def run(processes: List[Process], quantum: int = 1) -> Dict[str, List[Tuple[int,
     processes_copy = copy(processes)
 
     # FIFO queue
-    running_queue = PriorityQueueWrapper()
-
-    # Insert initial processes in queue
-    for proc in processes:
-        if proc.start == 0:
-            running_queue.put(proc)
-            processes_copy.remove(proc)
+    running_queue = PriorityQueueWrapper(sortBy="FIFO")
 
     while len(processes_copy)>0 or len(running_queue)>0:
         
-        if len(running_queue) == 0:
-            time_now += 1
-            continue
-
-        # Get the process
-        process = running_queue.get()
-
-        # Run it
-        out[process.id] = [(time_now, time_now+process.duration)]
-
         # Insert new processes in queue
-        for _ in range(time_now+1, time_now+process.duration+1):
+        while True:
             for proc in processes_copy[:]:
                 if proc.start <= time_now:
                     running_queue.put(proc)
                     processes_copy.remove(proc)
 
-        time_now += process.duration
+            if len(running_queue) > 0:
+                break
+            
+            time_now += 1
+
+        # Get the process
+        process = running_queue.pop()
+
+        duration = min(quantum, process.duration)
+
+        # Run it
+        if process.id in out.keys():
+            out[process.id].append((time_now, time_now+duration))
+        else:
+            out[process.id] = [(time_now, time_now+duration)]
+
+        # Re-insert it if it is not finished
+        process.duration -= duration
+        process.start = time_now + duration
+        if process.duration > 0:
+            processes_copy.append(process)
+
+        time_now += duration
 
     return out
     

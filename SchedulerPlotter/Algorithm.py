@@ -29,5 +29,4 @@ class Algorithm:
                 "Pn": [ (start0, end0), (start1, end1), ... ]
             }
         """
-
-        pass
+        ...
