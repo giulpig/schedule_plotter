@@ -27,7 +27,10 @@ class Process:
     def __eq__(self, other):
         return self.id == other.id
 
-    def __str__(self):
+    def __str__(self) -> str:
+        return f"id: {self.id}, duration: {self.duration}"
+    
+    def __repr__(self) -> str:
         return f"id: {self.id}, duration: {self.duration}"
 
 

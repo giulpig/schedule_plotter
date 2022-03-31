@@ -10,7 +10,6 @@ __license__ = "GPLv3"
 from copy import copy
 from typing import Dict, List, Tuple
 
-from numpy import empty
 from SchedulerPlotter.Algorithm import Algorithm
 from SchedulerPlotter.Process import Process
 
@@ -18,34 +17,38 @@ from SchedulerPlotter.Process import Process
 def run(processes: List[Process], quantum: int = 1) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
-    index_now = 0
 
-    dataset_copy = copy(processes)
-    while len(dataset_copy)>0:
+    processes_copy = copy(processes)
+
+    # FIFO queue
+    running_queue = PriorityQueueWrapper()
+
+    # Insert initial processes in queue
+    for proc in processes:
+        if proc.start == 0:
+            running_queue.put(proc)
+            processes_copy.remove(proc)
+
+    while len(processes_copy)>0 or len(running_queue)>0:
         
-        index_now %= len(dataset_copy)
-        process = dataset_copy[index_now]
-
-        if(process.duration == 0):
-            dataset_copy.remove(process)
+        if len(running_queue) == 0:
+            time_now += 1
             continue
 
-        process_time = min(process.duration, quantum)
+        # Get the process
+        process = running_queue.get()
 
-        if len(dataset_copy) == 1:
-            process_time = process.duration
+        # Run it
+        out[process.id] = [(time_now, time_now+process.duration)]
 
-        if process.id in out:
-            out[process.id].append((time_now, time_now+process_time))
-        else:
-            out[process.id] = [(time_now, time_now+process_time)]
+        # Insert new processes in queue
+        for _ in range(time_now+1, time_now+process.duration+1):
+            for proc in processes_copy[:]:
+                if proc.start <= time_now:
+                    running_queue.put(proc)
+                    processes_copy.remove(proc)
 
-        process.duration -= process_time
-
-        index_now = (index_now+1) % len(dataset_copy)
-
-        time_now += process_time
-        
+        time_now += process.duration
 
     return out
     
