@@ -16,9 +16,9 @@ import sys
 from schedule_plotter.Process import Process
 from schedule_plotter.plot_tools import plot, test_schedule_algorithm
 
-from Implementations.FCFS import FCFS
-from Implementations.SJF import SJF
-from Implementations.RoundRobin import RoundRobin
+from schedule_plotter.implementations.FCFS import FCFS
+from schedule_plotter.implementations.SJF import SJF
+from schedule_plotter.implementations.RoundRobin import RoundRobin
 
 
 if __name__ == "__main__":
