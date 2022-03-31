@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     Algorithm.py
     Class that describes a scheduling algorithm, see in detail how

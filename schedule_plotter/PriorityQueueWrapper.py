@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     PriorityQueueWrapper.py
     Wrapper class around PriorityQueue

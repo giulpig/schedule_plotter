@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     plot_tools.py
     Functions to create and eventually show the plot

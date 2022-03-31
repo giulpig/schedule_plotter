@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     RoundRobin.py
     Implementation of the RoundRobin scheduling algorithm

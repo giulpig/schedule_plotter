@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 """
     main.py
     usage: 
@@ -13,7 +13,8 @@ __license__ = "GPLv3"
 
 import sys
 
-from schedule_plotter import Process, plot, test_schedule_algorithm
+from schedule_plotter.Process import Process
+from schedule_plotter.plot_tools import plot, test_schedule_algorithm
 
 from Implementations.FCFS import FCFS
 from Implementations.SJF import SJF
@@ -22,17 +23,17 @@ from Implementations.RoundRobin import RoundRobin
 
 if __name__ == "__main__":
 
-    # Read data from csv
+    # Generate data
     if len(sys.argv) == 1:
-        dataset = Process.read_from_csv("input.csv")
+        try:
+            dataset = Process.read_from_csv(sys.argv[1])
+        except:
+            dataset = Process.gen_n_random_in_range(9, (0,1), (1, 3), (1,20))
     else:
         try:
             dataset = Process.read_from_csv(sys.argv[1])
         except:
             raise Exception("Invalid filename")
-
-    # Generate random processes. As for ranges, last element is not included
-    #dataset = Process.gen_n_random_in_range(9, (0,1), (1, 3), (1,20))
 
     # Plot FCFS using test funciton
     test_schedule_algorithm(FCFS, dataset)

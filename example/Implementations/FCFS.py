@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     FCFS.py
     Implementation of the FirstComeFirstServed scheduling algorithm

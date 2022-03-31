@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     Processes.py
     Process class, provides some basic properties and functions

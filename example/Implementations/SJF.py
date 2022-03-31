@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     SJF.py
     Implementation of the ShortestJobFirst scheduling algorithm
