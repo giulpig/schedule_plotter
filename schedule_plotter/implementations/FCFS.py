@@ -10,18 +10,18 @@ __license__ = "GPLv3"
 
 
 from typing import Dict, List, Tuple
-from copy import copy
+from copy import deepcopy
 
 from schedule_plotter.Algorithm import Algorithm
 from schedule_plotter.Process import Process
 from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
-def run(processes: List[Process]) -> Dict[str, List[Tuple[int, int]]]:
+def run(processes: List[Process], interactive: bool = False) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
     wait_time = 0
 
-    processes_copy = copy(processes)
+    processes_copy = deepcopy(processes)
 
     # FIFO queue
     ready_queue = PriorityQueueWrapper(sortBy="FIFO")
@@ -46,10 +46,11 @@ def run(processes: List[Process]) -> Dict[str, List[Tuple[int, int]]]:
 
         # Run it
         out[process.id] = [(time_now, time_now+process.duration)]
-
-        wait_time += time_now-process.start
-
+        
         time_now += process.duration
+
+        wait_time += time_now-process.start-process.duration
+
     
     print(f"Average wait time is {wait_time/len(processes)}")
 

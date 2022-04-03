@@ -8,7 +8,7 @@
 __author__ = "giulpig"
 __license__ = "GPLv3"
 
-from copy import copy
+from copy import deepcopy
 from typing import Dict, List, Tuple
 
 from schedule_plotter.Algorithm import Algorithm
@@ -16,12 +16,12 @@ from schedule_plotter.Process import Process
 from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
 # See interface in Algoritm class
-def run(processes: List[Process], quantum: int = 1) -> Dict[str, List[Tuple[int, int]]]:
+def run(processes: List[Process], interactive: bool = False, quantum: int = 1) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
     wait_time = 0
 
-    processes_copy = copy(processes)
+    processes_copy = deepcopy(processes)
 
     # FIFO queue
     ready_queue = PriorityQueueWrapper(sortBy="FIFO")
@@ -43,23 +43,23 @@ def run(processes: List[Process], quantum: int = 1) -> Dict[str, List[Tuple[int,
         # Get the process
         process = ready_queue.pop()
 
-        duration = min(quantum, process.duration)
+        burst_time = min(quantum, process.remaining_time)
 
         # Run it
         if process.id in out.keys():
-            out[process.id].append((time_now, time_now+duration))
+            out[process.id].append((time_now, time_now+burst_time))
         else:
-            out[process.id] = [(time_now, time_now+duration)]
+            out[process.id] = [(time_now, time_now+burst_time)]
+
+        time_now += burst_time
 
         # Re-insert it if it is not finished
-        process.duration -= duration
-        if process.duration > 0:
-            process.start = time_now + duration
+        process.remaining_time -= burst_time
+        if process.remaining_time > 0:
             processes_copy.append(process)
         else:
-            wait_time += time_now-process.start
+            wait_time += time_now-process.start-process.duration
 
-        time_now += duration
 
     print(f"Average wait time is {wait_time/len(processes)}")
 

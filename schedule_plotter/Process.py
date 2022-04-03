@@ -18,6 +18,7 @@ class Process:
         self.start: int = start
         self.duration : int = duration
         self.priority : int = priority
+        self.remaining_time: int = duration
 
     def __gt__(self, other):
         return self.id > other.id
@@ -29,10 +30,10 @@ class Process:
         return self.id == other.id
 
     def __str__(self) -> str:
-        return f"id: {self.id}, duration: {self.duration}"
+        return f"id: {self.id}, remaining time: {self.remaining_time}"
     
     def __repr__(self) -> str:
-        return f"id: {self.id}, duration: {self.duration}"
+        return f"id: {self.id}, remaing time: {self.remaining_time}"
 
 
     @classmethod

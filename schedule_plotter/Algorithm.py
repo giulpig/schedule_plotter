@@ -16,8 +16,8 @@ class Algorithm:
         self.name : str = name
         self.function = function
 
-    # Dummy function for interface
-    def function_interface(processes: List[Process]) -> Dict[str, List[Tuple[int, int]]]:
+    # Dummy function for pseudo-interface for "function" argument
+    def run(processes: List[Process], interaction: bool = False) -> Dict[str, List[Tuple[int, int]]]:
         """ 
         Interface for the scheduling algorithm function.
         

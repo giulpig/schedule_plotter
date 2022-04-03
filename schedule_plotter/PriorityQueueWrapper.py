@@ -26,7 +26,7 @@ class PriorityQueueWrapper:
             - "duration"
             - "priority"
             - "start"
-            - "id"
+            - "rem_time (remaining time)"
         """
         if sortBy == "FIFO":
             self.queue = deque()
@@ -59,8 +59,8 @@ class PriorityQueueWrapper:
             self.queue.append(proc)
         elif self.sortBy == "duration":
             self.queue.put((proc.duration, proc))
-        elif self.sortBy == "id":
-            self.queue.put((proc.id, proc))
+        elif self.sortBy == "rem_time":
+            self.queue.put((proc.remaining_time, proc))
         elif self.sortBy == "start":
             self.queue.put((proc.start, proc))
         elif self.sortBy == "priority":
