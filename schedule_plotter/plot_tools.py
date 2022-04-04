@@ -21,8 +21,7 @@ class ButtonFunctions:
     step = 0
 
     def next(self, event):
-        self.step += 1
-        
+        self.step
 
 
 # algo must be of Algorithm type and data must be an array of Processes
@@ -32,7 +31,7 @@ def plot(algo: Algorithm, to_schedule: List[Process], interactive: bool = False)
     # Get the plot object
     ax = get_plot(algo, to_schedule, interactive)
 
-    # I can manipulate the plot and show it
+    # I can name the plot and show it
     ax.set_xlabel(algo.name)
     plt.show()
 
@@ -41,7 +40,7 @@ def get_plot(algo: Algorithm, to_schedule: List[Process], interactive:bool = Fal
     """:return: a drawing that you can manipulate, show, save etc"""
 
     # Run algorithm against Process list to create scheduled data
-    scheduled_data = algo.function(to_schedule, interactive=interactive)
+    scheduled_data = algo.function(to_schedule, interaction=interactive)
 
     yspan = len(scheduled_data)
     yplaces = [.5+i for i in range(yspan)]
@@ -74,9 +73,9 @@ def get_plot(algo: Algorithm, to_schedule: List[Process], interactive:bool = Fal
 
 def plot_raw_data(algo_name: str, scheduled_data: Dict[str, List[Tuple[int, int]]]) -> None:
     # Dummy algorithm to directly plot scheduled data
-    dummy_algo = Algorithm(algo_name, lambda x: x)
+    dummy_algo = Algorithm(algo_name, lambda x, interaction=False: x)
 
-    ax = get_plot(dummy_algo, scheduled_data)
+    ax = get_plot(dummy_algo, scheduled_data, interactive=False)
 
     ax.set_xlabel(algo_name)
     plt.show()

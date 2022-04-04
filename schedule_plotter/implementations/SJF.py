@@ -17,7 +17,7 @@ from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
 
 
-def spn_run(processes: List[Process], interactive: bool = False) -> Dict[str, List[Tuple[int, int]]]:
+def spn_run(processes: List[Process], interaction: bool = False) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
     wait_time = 0
@@ -58,11 +58,11 @@ SPN = Algorithm("ShortestProcessNext", spn_run)
 
 
 
-def srt_run(processes: List[Process], interactive: bool = False) -> Dict[str, List[Tuple[int, int]]]:
+def srt_run(processes: List[Process], interaction: bool = False) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
     wait_time = 0
-
+    
     processes_copy = deepcopy(processes)
 
     ready_queue = PriorityQueueWrapper(sortBy="rem_time")

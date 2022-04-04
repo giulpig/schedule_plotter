@@ -16,7 +16,7 @@ from schedule_plotter.Process import Process
 from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
 # See interface in Algoritm class
-def run(processes: List[Process], interactive: bool = False, quantum: int = 1) -> Dict[str, List[Tuple[int, int]]]:
+def run(processes: List[Process], interaction: bool = False, quantum: int = 1) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
     wait_time = 0

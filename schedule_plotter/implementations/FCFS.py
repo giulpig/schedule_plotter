@@ -16,7 +16,7 @@ from schedule_plotter.Algorithm import Algorithm
 from schedule_plotter.Process import Process
 from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
-def run(processes: List[Process], interactive: bool = False) -> Dict[str, List[Tuple[int, int]]]:
+def run(processes: List[Process], interaction: bool = False) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
     wait_time = 0
@@ -46,7 +46,7 @@ def run(processes: List[Process], interactive: bool = False) -> Dict[str, List[T
 
         # Run it
         out[process.id] = [(time_now, time_now+process.duration)]
-        
+
         time_now += process.duration
 
         wait_time += time_now-process.start-process.duration
