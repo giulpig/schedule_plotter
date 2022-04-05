@@ -17,7 +17,7 @@ from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
 
 
-def spn_run(processes: List[Process], interaction: bool = False) -> Dict[str, List[Tuple[int, int]]]:
+def spn_run(processes: List[Process], interaction: bool = False, step: int = -1) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
     wait_time = 0
@@ -40,6 +40,9 @@ def spn_run(processes: List[Process], interaction: bool = False) -> Dict[str, Li
             
             time_now += 1
 
+        if step == 0:
+            break
+
         # Get the process
         process = ready_queue.pop()
 
@@ -50,6 +53,8 @@ def spn_run(processes: List[Process], interaction: bool = False) -> Dict[str, Li
 
         time_now += process.duration
 
+        step -= 1
+
     print(f"Average wait time is {wait_time/len(processes)}")
 
     return out
@@ -58,7 +63,7 @@ SPN = Algorithm("ShortestProcessNext", spn_run)
 
 
 
-def srt_run(processes: List[Process], interaction: bool = False) -> Dict[str, List[Tuple[int, int]]]:
+def srt_run(processes: List[Process], interaction: bool = False, step: int = -1) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
     wait_time = 0
@@ -81,6 +86,9 @@ def srt_run(processes: List[Process], interaction: bool = False) -> Dict[str, Li
             
             time_now += 1
 
+        if step == 0:
+            break
+
         # Get the process
         process = ready_queue.pop()
 
@@ -99,6 +107,8 @@ def srt_run(processes: List[Process], interaction: bool = False) -> Dict[str, Li
             processes_copy.append(process)
         else:
             wait_time += time_now-process.start-process.duration
+
+        step -= 1
 
 
     print(f"Average wait time is {wait_time/len(processes)}")

@@ -16,7 +16,7 @@ from schedule_plotter.Algorithm import Algorithm
 from schedule_plotter.Process import Process
 from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
-def run(processes: List[Process], interaction: bool = False) -> Dict[str, List[Tuple[int, int]]]:
+def run(processes: List[Process], interaction: bool = False, step: int = -1) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
     wait_time = 0
@@ -41,6 +41,9 @@ def run(processes: List[Process], interaction: bool = False) -> Dict[str, List[T
             
             time_now += 1
 
+        if step == 0:
+            break
+
         # Get the process
         process = ready_queue.pop()
 
@@ -51,6 +54,7 @@ def run(processes: List[Process], interaction: bool = False) -> Dict[str, List[T
 
         wait_time += time_now-process.start-process.duration
 
+        step -= 1
     
     print(f"Average wait time is {wait_time/len(processes)}")
 

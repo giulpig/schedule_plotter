@@ -152,8 +152,8 @@ def get_plot(algo: Algorithm, to_schedule: List[Process], delta:float = 0.4) -> 
     except:
         xspan = 0
 
-    ax.set_xticks((i for i in range(xspan)))    
-    ax.set_xticklabels((str(i) for i in range(xspan)))
+    ax.set_xticks([i for i in range(xspan)])    
+    ax.set_xticklabels([str(i) for i in range(xspan)])
 
     try:
         ax.set_ylim((0, yspan))
@@ -186,7 +186,7 @@ def plot_raw_data(algo_name: str, scheduled_data: Dict[str, List[Tuple[int, int]
     # Dummy algorithm to directly plot scheduled data
     dummy_algo = Algorithm(algo_name, lambda x, interaction=False, step=-1: x)
 
-    ax = get_plot(dummy_algo, scheduled_data, interactive=False)
+    ax = get_plot(dummy_algo, scheduled_data)
 
     ax.set_xlabel(algo_name)
     plt.show()

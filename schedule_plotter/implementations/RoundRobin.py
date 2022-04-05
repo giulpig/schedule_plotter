@@ -65,7 +65,6 @@ def run(processes: List[Process], interaction: bool = False, step: int = -1, qua
 
         step -= 1
 
-    print(out)
     print(f"Average wait time is {wait_time/len(processes)}")
 
     return out

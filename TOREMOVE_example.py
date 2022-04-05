@@ -36,18 +36,18 @@ if __name__ == "__main__":
             raise Exception("Invalid filename")
 
     # Plot FCFS using test funciton
-    #plot(FCFS, dataset)
+    #plot(FCFS, dataset, interactive=True)
     print()
 
     # Direct plotting of SPN
-    #print(f"Plotting {SPN.name} algorithm")
-    #scheduled_data = SPN.function(dataset)
-    #plot_raw_data(SPN.name, scheduled_data)
+    # print(f"Plotting {SPN.name} algorithm")
+    # scheduled_data = SPN.function(dataset)
+    # plot_raw_data(SPN.name, scheduled_data)
     print()
 
     # Plot SRT using test funciton
-    #plot(SRT, dataset)
+    plot(SRT, dataset, interactive=True)
     print()
 
     # Plot RoundRobin
-    plot(RoundRobin, dataset, interactive=True)
+    #plot(RoundRobin, dataset, interactive=True)
