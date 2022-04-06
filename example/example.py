@@ -19,6 +19,7 @@ from schedule_plotter.plot_tools import plot_raw_data, plot
 from schedule_plotter.implementations.FCFS import FCFS
 from schedule_plotter.implementations.SJF import SPN, SRT
 from schedule_plotter.implementations.RoundRobin import RoundRobin
+from schedule_plotter import config
 
 
 if __name__ == "__main__":
@@ -36,7 +37,7 @@ if __name__ == "__main__":
             raise Exception("Invalid filename")
 
     # Plot FCFS using test funciton
-    #plot(FCFS, dataset, interactive=True)
+    plot(FCFS, dataset, interactive=True)
     print()
 
     # Direct plotting of SPN
@@ -50,4 +51,4 @@ if __name__ == "__main__":
     print()
 
     # Plot RoundRobin
-    #plot(RoundRobin, dataset, interactive=True)
+    plot(RoundRobin, dataset, interactive=True)

@@ -30,10 +30,10 @@ class Process:
         return self.id == other.id
 
     def __str__(self) -> str:
-        return f"id: {self.id}, remaining time: {self.remaining_time}"
+        return f"[id: {self.id}, remaining time: {self.remaining_time}]"
     
     def __repr__(self) -> str:
-        return f"id: {self.id}, remaing time: {self.remaining_time}"
+        return f"[id: {self.id}, remaing time: {self.remaining_time}]"
 
 
     @classmethod

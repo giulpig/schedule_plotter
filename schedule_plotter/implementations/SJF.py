@@ -14,17 +14,18 @@ from copy import deepcopy
 from schedule_plotter.Algorithm import Algorithm
 from schedule_plotter.Process import Process
 from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
+from schedule_plotter import config
 
 
 
-def spn_run(processes: List[Process], interaction: bool = False, step: int = -1) -> Dict[str, List[Tuple[int, int]]]:
+def spn_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
     wait_time = 0
 
     processes_copy = deepcopy(processes)
 
-    ready_queue = PriorityQueueWrapper(sortBy="duration")
+    ready_queue.set_sort_order("duration")
 
     while len(processes_copy)>0 or len(ready_queue)>0:
         
@@ -55,7 +56,8 @@ def spn_run(processes: List[Process], interaction: bool = False, step: int = -1)
 
         step -= 1
 
-    print(f"Average wait time is {wait_time/len(processes)}")
+    if config.print_stats:
+        print(f"Average wait time is {wait_time/len(processes)}")
 
     return out
 
@@ -63,14 +65,14 @@ SPN = Algorithm("ShortestProcessNext", spn_run)
 
 
 
-def srt_run(processes: List[Process], interaction: bool = False, step: int = -1) -> Dict[str, List[Tuple[int, int]]]:
+def srt_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
     wait_time = 0
     
     processes_copy = deepcopy(processes)
 
-    ready_queue = PriorityQueueWrapper(sortBy="rem_time")
+    ready_queue.set_sort_order("rem_time")
 
     while len(processes_copy)>0 or len(ready_queue)>0:
         
@@ -110,8 +112,8 @@ def srt_run(processes: List[Process], interaction: bool = False, step: int = -1)
 
         step -= 1
 
-
-    print(f"Average wait time is {wait_time/len(processes)}")
+    if config.print_stats:
+        print(f"Average wait time is {wait_time/len(processes)}")
 
     return out
 

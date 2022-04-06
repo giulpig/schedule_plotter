@@ -7,18 +7,23 @@
 __author__ = "giulpig"
 __license__ = "GPLv3"
 
-from time import sleep
+import queue
 import matplotlib
 import matplotlib.figure
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.widgets import Button
 
+from typing import List, Tuple, Dict
+
+# TOREMOVE, just for debugging
 import warnings
 warnings.filterwarnings("error")
 
+import sys
+
 from schedule_plotter.Algorithm import Algorithm, Process
-from typing import List, Tuple, Dict
+from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
 
 class PlotUpdater:
@@ -27,8 +32,9 @@ class PlotUpdater:
         self._step = 0
         self.to_schedule = data
         self.algo = algo
-        self.myplot = self.__call__(None)
         self.buttons = ()
+        self.ready_queue = PriorityQueueWrapper()
+        self.myplot = self.__call__(None)
 
     # Update method, called on button click
     def __call__(self, event):
@@ -37,11 +43,13 @@ class PlotUpdater:
         fig = plt.figure(num=1, clear=True)
 
         ax = fig.add_subplot(111)
-        ax.set_xlabel(self.algo.name + str(self._step))
+        ax.set_xlabel(self.algo.name + "-" + str(self._step))
 
+        # Create an empty ready queue to feed to the algorithm
+        self.ready_queue = PriorityQueueWrapper()
         
         # Run algorithm against Process list to create scheduled data
-        scheduled_data = self.algo.function(self.to_schedule, interaction=True, step=self._step)
+        scheduled_data = self.algo.function(self.to_schedule, step=self._step, ready_queue=self.ready_queue)
 
         yspan = len(scheduled_data)
         yplaces = [.5+i for i in range(yspan)]
@@ -87,42 +95,66 @@ class PlotUpdater:
         
         self.myplot = ax
 
-        # Re-insert buttons
-        axstep = plt.axes([0.9, 0.9, 0.11, 0.1])
-        bstep = Button(axstep, 'Step', color='lightgreen', hovercolor='lightblue')
-        bstep.on_clicked(self)
-        
-        axclose = plt.axes((0.0, 0.9, 0.1, 0.1))
-        bclose = Button(axclose, 'Close', color='#f542e6', hovercolor='lightblue')
-        bclose.on_clicked(PlotUpdater.closeplot)
+        # Insert buttons
+        if self.buttons == ():
+            temp_axes = plt.axes([0.9, 0.9, 0.1, 0.1])
+            bstep = Button(temp_axes, 'Step', color='lightgreen', hovercolor='lightblue')
+            bstep.on_clicked(self)
 
-        # Reference of buttons for garbage collector
-        self.mybuttons = (bstep, bclose)
+            temp_axes = plt.axes((0.0, 0.9, 0.12, 0.1))
+            bclose = Button(temp_axes, 'Close', color='red', hovercolor='lightblue')
+            bclose.on_clicked(PlotUpdater.exitall)
+            
+            temp_axes = plt.axes((0.12, 0.9, 0.15, 0.1))
+            bnext = Button(temp_axes, 'Next plot', color='#f542e6', hovercolor='lightblue')
+            bnext.on_clicked(PlotUpdater.closeplot)
+
+            temp_axes = plt.axes((0.75, 0.9, 0.15, 0.1))
+            bprint = Button(temp_axes, 'Print Queue', color='yellow', hovercolor='lightblue')
+            bprint.on_clicked(PlotUpdater.PrintClass(self.ready_queue))
+
+            # Reference of buttons for garbage collector
+            self.mybuttons = (bstep, bnext, bclose, bprint)
 
         plt.draw()
         self._step += 1
 
-    # Method to close window
+    # Method to go to next plot
     @classmethod
     def closeplot(self, event):
         plt.close()
 
+    # Method to stop execution
+    @classmethod
+    def exitall(self, event):
+        plt.close()
+        sys.exit()
+
+    # Hacky subclass to hold queue while being callable
+    class PrintClass:
+        def __init__(self, queue: PriorityQueueWrapper):
+            self.queue = queue
+
+        def __call__(self, event):
+
+            print("Printing ready queue")
+            for i in self.queue:
+                print(f"\t{i.id} - remaning time: {i.remaining_time}")
+            print()
+
+            
 
 # algo must be of Algorithm type and data must be an array of Processes
 def plot(algo: Algorithm, to_schedule: List[Process], interactive: bool = False) -> None:
-    print(f"Plotting {algo.name} algorithm")
+    print(f"Plotting {algo.name} algorithm\n")
 
     if interactive:
-
         updater = PlotUpdater(algo, to_schedule)
-
-        plt.show()
     
     else:
-        # Get the plot object
         ax = get_plot(algo, to_schedule)
 
-        plt.show()
+    plt.show()
         
 
 

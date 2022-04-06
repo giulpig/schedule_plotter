@@ -15,8 +15,9 @@ from copy import deepcopy
 from schedule_plotter.Algorithm import Algorithm
 from schedule_plotter.Process import Process
 from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
+from schedule_plotter import config
 
-def run(processes: List[Process], interaction: bool = False, step: int = -1) -> Dict[str, List[Tuple[int, int]]]:
+def run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1) -> Dict[str, List[Tuple[int, int]]]:
     out = {}
     time_now = 0
     wait_time = 0
@@ -24,7 +25,7 @@ def run(processes: List[Process], interaction: bool = False, step: int = -1) -> 
     processes_copy = deepcopy(processes)
 
     # FIFO queue
-    ready_queue = PriorityQueueWrapper(sortBy="FIFO")
+    ready_queue.set_sort_order("FIFO")
 
 
     while len(processes_copy)>0 or len(ready_queue)>0:
@@ -55,8 +56,9 @@ def run(processes: List[Process], interaction: bool = False, step: int = -1) -> 
         wait_time += time_now-process.start-process.duration
 
         step -= 1
-    
-    print(f"Average wait time is {wait_time/len(processes)}")
+        
+    if config.print_stats:
+        print(f"Average wait time is {wait_time/len(processes)}")
 
     return out
     

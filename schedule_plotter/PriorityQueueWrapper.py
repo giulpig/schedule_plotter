@@ -8,8 +8,11 @@ __author__ = "giulpig"
 __license__ = "GPLv3"
 
 
-from queue import PriorityQueue
+#from queue import PriorityQueue
 from collections import deque
+from sortedcontainers import SortedDict
+
+from numpy import sort
 
 from schedule_plotter.Process import Process
 
@@ -20,7 +23,7 @@ class PriorityQueueWrapper:
     running queue
     """
     
-    def __init__(self, sortBy: str = "FIFO"):
+    def __init__(self, sort_by: str = "FIFO"):
         """:param sortBy: can be 
             - "FIFO" (default)
             - "duration"
@@ -28,50 +31,65 @@ class PriorityQueueWrapper:
             - "start"
             - "rem_time (remaining time)"
         """
-        if sortBy == "FIFO":
+        if sort_by == "FIFO":
             self.queue = deque()
         else:
-            self.queue = PriorityQueue()
+            self.queue = SortedDict()
 
-        self.sortBy = sortBy
+        self.sort_by = sort_by
 
     def __len__(self) -> int:
-        if self.sortBy == "FIFO":
-            return len(self.queue)
-        else:
-            return self.queue._qsize()
+        return len(self.queue)
 
     def __str__(self) -> str:
+        return str(self.queue)
 
-        if self.sortBy == "FIFO":
-            return str(self.queue)
+    def __iter__(self):
+        self.n = 0
+        return self
 
-        temp = []
-        while self.queue.qsize() > 0:
-            temp.append(self.queue.get())
-        for i in temp:
-            self.queue.put(i)
-
-        return f"PriorityQueue{[i[1] for i in temp]}"
+    def __next__(self):
+        if self.n < len(self.queue):
+            self.n += 1
+            if self.sort_by == "FIFO":
+                return self.queue[self.n-1]
+            return (self.queue.peekitem(self.n-1))[1]
+        else:
+            raise StopIteration
 
     def put(self, proc: Process) -> None:
-        if self.sortBy == "FIFO":
+        if self.sort_by == "FIFO":
             self.queue.append(proc)
-        elif self.sortBy == "duration":
-            self.queue.put((proc.duration, proc))
-        elif self.sortBy == "rem_time":
-            self.queue.put((proc.remaining_time, proc))
-        elif self.sortBy == "start":
-            self.queue.put((proc.start, proc))
-        elif self.sortBy == "priority":
-            self.queue.put((proc.priority, proc))
+        elif self.sort_by == "duration":
+            self.queue.update({proc.duration: proc})
+        elif self.sort_by == "rem_time":
+            self.queue.update({proc.remaining_time: proc})
+        elif self.sort_by == "start":
+            self.queue.update({proc.start: proc})
+        elif self.sort_by == "priority":
+            self.queue.update({proc.priority: proc})
         else:
             raise Exception("invalid sorting criterion")
 
     def pop(self) -> Process:
-
-        if self.sortBy == "FIFO":
+        if self.sort_by == "FIFO":
             return self.queue.popleft()
 
-        (_, out) = self.queue.get()
+        (_, out) = self.queue.popitem(0)
         return out
+
+    def set_sort_order(self, sort_by: str):
+        if self.sort_by == sort_by:
+            return
+        
+        if self.sort_by == "FIFO":
+            temp = self.queue
+        else:
+            temp = self.queue.values()
+
+        self.__init__(sort_by=sort_by)
+
+        for i in temp:
+            self.put(i)
+
+        
