@@ -27,10 +27,7 @@ if __name__ == "__main__":
 
     # Generate data
     if len(sys.argv) == 1:
-        try:
-            dataset = Process.read_from_csv(sys.argv[1])
-        except:
-            dataset = Process.gen_n_random_in_range(9, (0,10), (1, 5), (-10,20))
+        dataset = Process.gen_n_random_in_range(9, (0,10), (1, 5), (-10,20))
     else:
         try:
             dataset = Process.read_from_csv(sys.argv[1])

@@ -8,6 +8,7 @@ __author__ = "giulpig"
 __license__ = "GPLv3"
 
 import queue
+from turtle import color
 import matplotlib
 import matplotlib.figure
 import matplotlib.pyplot as plt
@@ -64,7 +65,7 @@ class PlotUpdater:
 
 
         try:
-            xspan = max((j[1] for i in scheduled_data.values() for j in i))
+            xspan = max((j[1] for i in scheduled_data.values() for j in i[1]))
         except:
             xspan = 0
             
@@ -76,22 +77,37 @@ class PlotUpdater:
 
         try:
             ax.set_ylim((0, yspan))
-            low, hi = scheduled_data[ylabels[0]][0]
+            low, high = scheduled_data[ylabels[0]][0][0]
         except:
             ax.set_ylim((0, 1))
-            low, hi = (0, 1)
+            low, high = (0, 1)
 
 
         for pos, label in zip(yplaces, ylabels):
-            for (start, end) in scheduled_data[label]:
-                ax.add_patch(patches.Rectangle((start, pos-0.4/2.0), end-start, 0.4))
-                if start < low:
-                    low = start
-                if end > hi:
-                    hi = end
+            # Plot executing and in_queue processes
+            in_queue, executing = scheduled_data[label]
+            for (start, end) in in_queue:
+                
+                if start == end:
+                    continue
+
+                ax.add_patch(patches.Rectangle((start, pos-0.4/2.0), end-start, 0.4, color="#ccff99"))
+
+                low = min(start, low)
+                high = max(end, high)
+
+            for (start, end) in executing:
+                
+                if start == end:
+                    continue
+                
+                ax.add_patch(patches.Rectangle((start, pos-0.4/2.0), end-start, 0.4, color="#3366ff"))
+
+                low = min(start, low)
+                high = max(end, high)
 
         # Draw an invisible line so that the x axis limits are automatically adjusted
-        ax.plot((low, hi), (0, 0))
+        ax.plot((low, high), (0, 0))
 
         xmin, xmax = ax.get_xlim()
         ax.hlines(range(1, yspan), int(xmin+0.5), int(xmax-0.5))
@@ -186,7 +202,7 @@ def get_plot(algo: Algorithm, to_schedule: List[Process], delta:float = 0.4) -> 
 
 
     try:
-        xspan = max((j[1] for i in scheduled_data.values() for j in i))
+        xspan = max((j[1] for i in scheduled_data.values() for j in i[1]))
     except:
         xspan = 0
 
@@ -195,22 +211,37 @@ def get_plot(algo: Algorithm, to_schedule: List[Process], delta:float = 0.4) -> 
 
     try:
         ax.set_ylim((0, yspan))
-        low, hi = scheduled_data[ylabels[0]][0]
+        low, high = scheduled_data[ylabels[0]][0][0]
     except:
         ax.set_ylim((0, 1))
-        low, hi = (0, 1)
+        low, high = (0, 1)
 
 
     for pos, label in zip(yplaces, ylabels):
-        for (start, end) in scheduled_data[label]:
-            ax.add_patch(patches.Rectangle((start, pos-delta/2.0), end-start, delta))
-            if start < low:
-                low = start
-            if end > hi:
-                hi = end
+            # Plot executing and in_queue processes
+            in_queue, executing = scheduled_data[label]
+            for (start, end) in in_queue:
+                
+                if start == end:
+                    continue
+
+                ax.add_patch(patches.Rectangle((start, pos-0.4/2.0), end-start, 0.4, color="#ccff99"))
+
+                low = min(start, low)
+                high = max(end, high)
+
+            for (start, end) in executing:
+                
+                if start == end:
+                    continue
+                
+                ax.add_patch(patches.Rectangle((start, pos-0.4/2.0), end-start, 0.4, color="#3366ff"))
+
+                low = min(start, low)
+                high = max(end, high)
 
     # Draw an invisible line so that the x axis limits are automatically adjusted
-    ax.plot((low, hi), (0, 0))
+    ax.plot((low, high), (0, 0))
 
     xmin, xmax = ax.get_xlim()
     ax.hlines(range(1, yspan), int(xmin+0.5), int(xmax-0.5))

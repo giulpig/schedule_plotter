@@ -17,17 +17,17 @@ class Algorithm:
         self.function = function
 
     # Dummy function for pseudo-interface for "function" argument
-    def run(processes: List[Process], interaction: bool = False) -> Dict[str, List[Tuple[int, int]]]:
+    def run(processes: List[Process], interaction: bool = False) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
         """ 
         Interface for the scheduling algorithm function.
         
         :param processes: processes to schedule, in a list of Processes
         :return: dictionary with this layout:
             {
-                "P1": [ (start0, end0), (start1, end1), ... ],
-                "P2": [ (start0, end0), (start1, end1), ... ],
+                "P0": ([(start_queue0, end_queue0), ...], [ (start_exec0, end_exec0), ... ]),
+                "P1": ([(start_queue0, end_queue0), ...], [ (start_exec0, end_exec0), ... ]),
                 ...
-                "Pn": [ (start0, end0), (start1, end1), ... ]
+                "Pn-1": ([(start_queue0, end_queue0), ...], [ (start_exec0, end_exec0), ... ])
             }
         """
         ...

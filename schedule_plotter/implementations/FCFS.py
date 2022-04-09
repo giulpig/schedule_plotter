@@ -17,7 +17,7 @@ from schedule_plotter.Process import Process
 from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 from schedule_plotter import config
 
-def run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1) -> Dict[str, List[Tuple[int, int]]]:
+def run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
     out = {}
     time_now = 0
     wait_time = 0
@@ -48,8 +48,13 @@ def run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction
         # Get the process
         process = ready_queue.pop()
 
-        # Run it
-        out[process.id] = [(time_now, time_now+process.duration)]
+        # Run it by storing process lifetime (in queue and executing)
+        if process.id in out.keys():
+            out[process.id][0].append((process.start, time_now))
+            out[process.id][1].append((time_now, time_now+process.duration))
+
+        else:
+            out[process.id] = [(process.start, time_now)], [(time_now, time_now+process.duration)]
 
         time_now += process.duration
 

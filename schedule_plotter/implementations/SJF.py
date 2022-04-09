@@ -18,7 +18,7 @@ from schedule_plotter import config
 
 
 
-def spn_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1) -> Dict[str, List[Tuple[int, int]]]:
+def spn_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
     out = {}
     time_now = 0
     wait_time = 0
@@ -47,8 +47,13 @@ def spn_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interac
         # Get the process
         process = ready_queue.pop()
 
-        # Run it
-        out[process.id] = [(time_now, time_now+process.duration)]
+        # Run it by storing process lifetime (in queue and executing)
+        if process.id in out.keys():
+            out[process.id][0].append((process.start, time_now))
+            out[process.id][1].append((time_now, time_now+process.duration))
+        else:
+            out[process.id] = [(process.start, time_now)], [(time_now, time_now+process.duration)]
+
 
         wait_time += time_now-process.start
 
@@ -65,7 +70,7 @@ SPN = Algorithm("ShortestProcessNext", spn_run)
 
 
 
-def srt_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1) -> Dict[str, List[Tuple[int, int]]]:
+def srt_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
     out = {}
     time_now = 0
     wait_time = 0
@@ -94,11 +99,13 @@ def srt_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interac
         # Get the process
         process = ready_queue.pop()
 
-        # Run it for 1 unit of time
+        # Run it by storing process lifetime (in queue and executing)
         if process.id in out.keys():
-            out[process.id].append((time_now, time_now+1))
+            out[process.id][0].append((process.start, time_now))
+            out[process.id][1].append((time_now, time_now+1))
         else:
-            out[process.id] = [(time_now, time_now+1)]
+            out[process.id] = [(process.start, time_now)], [(time_now, time_now+1)]
+
 
         process.remaining_time -= 1
 

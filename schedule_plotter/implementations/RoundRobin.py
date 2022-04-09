@@ -17,7 +17,7 @@ from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 from schedule_plotter import config
 
 # See interface in Algoritm class
-def run(processes: List[Process], ready_queue: PriorityQueueWrapper, step: int = -1, quantum: int = 1) -> Dict[str, List[Tuple[int, int]]]:
+def run(processes: List[Process], ready_queue: PriorityQueueWrapper, step: int = -1, quantum: int = 1) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
     out = {}
     time_now = 0
     wait_time = 0
@@ -49,11 +49,13 @@ def run(processes: List[Process], ready_queue: PriorityQueueWrapper, step: int =
 
         burst_time = min(quantum, process.remaining_time)
 
-        # Run it
+        # Run it by storing process lifetime (in queue and executing)
         if process.id in out.keys():
-            out[process.id].append((time_now, time_now+burst_time))
+            out[process.id][0].append((process.start, time_now))
+            out[process.id][1].append((time_now, time_now+burst_time))
         else:
-            out[process.id] = [(time_now, time_now+burst_time)]
+            out[process.id] = [(process.start, time_now)], [(time_now, time_now+burst_time)]
+
 
         time_now += burst_time
 
