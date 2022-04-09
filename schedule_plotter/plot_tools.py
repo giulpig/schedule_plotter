@@ -40,10 +40,14 @@ class PlotUpdater:
     def __call__(self, event):
         
         # Clear
-        fig = plt.figure(num=1, clear=True)
+        fig = plt.figure(num=1, clear=True, figsize=(10, 8))
 
         ax = fig.add_subplot(111)
-        ax.set_xlabel(self.algo.name + "-" + str(self._step))
+        
+        if self._step == -1:
+            ax.set_xlabel(self.algo.name)
+        else:
+            ax.set_xlabel(self.algo.name + " - " + str(self._step))
 
         # Create an empty ready queue to feed to the algorithm
         self.ready_queue = PriorityQueueWrapper()
@@ -98,49 +102,51 @@ class PlotUpdater:
         # Insert buttons
         if self.buttons == ():
             temp_axes = plt.axes([0.9, 0.9, 0.1, 0.1])
-            bstep = Button(temp_axes, 'Step', color='lightgreen', hovercolor='lightblue')
-            bstep.on_clicked(self)
-
-            temp_axes = plt.axes((0.0, 0.9, 0.12, 0.1))
             bclose = Button(temp_axes, 'Close', color='red', hovercolor='lightblue')
             bclose.on_clicked(PlotUpdater.exitall)
+
+            temp_axes = plt.axes((0.0, 0.9, 0.12, 0.1))
+            bstep = Button(temp_axes, 'Step', color='lightgreen', hovercolor='lightblue')
+            bstep.on_clicked(self)
             
             temp_axes = plt.axes((0.12, 0.9, 0.15, 0.1))
+            bprint = Button(temp_axes, 'Print Queue', color='yellow', hovercolor='lightblue')
+            bprint.on_clicked(self.print_queue)
+
+            temp_axes = plt.axes((0.75, 0.9, 0.15, 0.1))
             bnext = Button(temp_axes, 'Next plot', color='#f542e6', hovercolor='lightblue')
             bnext.on_clicked(PlotUpdater.closeplot)
 
-            temp_axes = plt.axes((0.75, 0.9, 0.15, 0.1))
-            bprint = Button(temp_axes, 'Print Queue', color='yellow', hovercolor='lightblue')
-            bprint.on_clicked(PlotUpdater.PrintClass(self.ready_queue))
+            temp_axes = plt.axes((0.60, 0.9, 0.15, 0.1))
+            bend = Button(temp_axes, 'Go to end', color='#6699ff', hovercolor='lightblue')
+            bend.on_clicked(self.goto_end)
 
             # Reference of buttons for garbage collector
-            self.mybuttons = (bstep, bnext, bclose, bprint)
+            self.mybuttons = (bstep, bnext, bclose, bprint, bend)
 
         plt.draw()
         self._step += 1
 
     # Method to go to next plot
     @classmethod
-    def closeplot(self, event):
+    def closeplot(_self, event) -> None:
         plt.close()
 
     # Method to stop execution
     @classmethod
-    def exitall(self, event):
+    def exitall(_self, event) -> None:
         plt.close()
         sys.exit()
 
-    # Hacky subclass to hold queue while being callable
-    class PrintClass:
-        def __init__(self, queue: PriorityQueueWrapper):
-            self.queue = queue
+    def print_queue(self, event) -> None:
+        print("Printing ready queue")
+        for i in self.ready_queue:
+            print(f"\t{i.id} - remaning time: {i.remaining_time}")
+        print()
 
-        def __call__(self, event):
-
-            print("Printing ready queue")
-            for i in self.queue:
-                print(f"\t{i.id} - remaning time: {i.remaining_time}")
-            print()
+    def goto_end(self, event):
+        self._step = -1
+        self.__call__(None)
 
             
 
@@ -162,14 +168,14 @@ def get_plot(algo: Algorithm, to_schedule: List[Process], delta:float = 0.4) -> 
     """:return: a drawing that you can manipulate, show, save etc"""
 
     # Clear
-    fig = plt.figure(num=1, clear=True)
+    fig = plt.figure(num=1, clear=True, figsize=(10, 8))
 
     ax = fig.add_subplot(111)
     ax.set_xlabel(algo.name)
 
     
     # Run algorithm against Process list to create scheduled data
-    scheduled_data = algo.function(to_schedule)
+    scheduled_data = algo.function(to_schedule, PriorityQueueWrapper())
 
     yspan = len(scheduled_data)
     yplaces = [.5+i for i in range(yspan)]

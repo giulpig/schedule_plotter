@@ -17,6 +17,6 @@ setup(
     description='A tool to plot scheduling algorithms',
     author='giulpig',
     license='GPLv3',
-    install_requires=["matplotlib"],
+    install_requires=["matplotlib", "sortedcontainers"],
     setup_requires=[]
 )

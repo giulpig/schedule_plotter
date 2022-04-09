@@ -20,6 +20,7 @@ from schedule_plotter.implementations.FCFS import FCFS
 from schedule_plotter.implementations.SJF import SPN, SRT
 from schedule_plotter.implementations.RoundRobin import RoundRobin
 from schedule_plotter import config
+from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
 
 if __name__ == "__main__":
@@ -40,15 +41,15 @@ if __name__ == "__main__":
     plot(FCFS, dataset, interactive=True)
     print()
 
-    # Direct plotting of SPN
-    # print(f"Plotting {SPN.name} algorithm")
-    # scheduled_data = SPN.function(dataset)
-    # plot_raw_data(SPN.name, scheduled_data)
-    print()
-
     # Plot SRT using test funciton
     plot(SRT, dataset, interactive=True)
     print()
 
     # Plot RoundRobin
     plot(RoundRobin, dataset, interactive=True)
+
+    # Direct plotting of SPN
+    print(f"Plotting {SPN.name} algorithm")
+    scheduled_data = SPN.function(dataset, PriorityQueueWrapper("rem_time"))
+    plot_raw_data(SPN.name, scheduled_data)
+    print()
