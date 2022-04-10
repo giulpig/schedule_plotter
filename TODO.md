@@ -1,2 +1,2 @@
-- Add some extra statitics and interactive queue plotter
-- Optimize code with yield instead of return
+- Appear/desappear bug
+- Add some extra statitics

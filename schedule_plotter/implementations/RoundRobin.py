@@ -49,12 +49,11 @@ def run(processes: List[Process], ready_queue: PriorityQueueWrapper, step: int =
 
         burst_time = min(quantum, process.remaining_time)
 
-        # Run it by storing process lifetime (in queue and executing)
-        if process.id in out.keys():
-            out[process.id][0].append((process.start, time_now))
+        # Run and store process burst time
+        if process.id in out:
             out[process.id][1].append((time_now, time_now+burst_time))
         else:
-            out[process.id] = [(process.start, time_now)], [(time_now, time_now+burst_time)]
+            out[process.id] = [], [(time_now, time_now+burst_time)]
 
 
         time_now += burst_time
@@ -64,10 +63,25 @@ def run(processes: List[Process], ready_queue: PriorityQueueWrapper, step: int =
         if process.remaining_time > 0:
             processes_copy.append(process)
         else:
+
+            if process.id in out:
+                out[process.id][0].append((process.start, time_now-burst_time))
+            else:
+                out[process.id] = [(process.start, time_now-burst_time)], []
+
             wait_time += time_now-process.start-process.duration
 
         step -= 1
 
+    # Add in_queue slices
+    for seq in (processes_copy, ready_queue):
+        for proc in seq:
+            if proc.start < time_now:
+                if proc.id in out:
+                    out[proc.id][0].append((proc.start, time_now))
+                else:
+                    out[proc.id] = [(proc.start, time_now)], []
+    
     if config.print_stats:
         print(f"Average wait time is {wait_time/len(processes)}")
 

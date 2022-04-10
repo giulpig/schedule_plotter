@@ -10,6 +10,7 @@ __license__ = "GPLv3"
 
 #from queue import PriorityQueue
 from collections import deque
+from queue import Queue
 from sortedcontainers import SortedDict
 
 from schedule_plotter.Process import Process
@@ -30,11 +31,11 @@ class PriorityQueueWrapper:
             - "rem_time (remaining time)"
         """
         if sort_by == "FIFO":
-            self.queue = deque()
+            self.queue : type[deque] = deque()
         else:
-            self.queue = SortedDict()
+            self.queue : type[SortedDict] = SortedDict()
 
-        self.sort_by = sort_by
+        self.sort_by : str = sort_by
 
     def __len__(self) -> int:
         return len(self.queue)
@@ -43,19 +44,28 @@ class PriorityQueueWrapper:
         return str(self.queue)
 
     def __iter__(self):
-        self.n = 0
+        self.iter_index = 0
+        self.list_index = 0
+        self.in_list_index = 0
         return self
 
     def __next__(self):
-        if self.n < len(self.queue):
-            self.n += 1
+        if self.iter_index < len(self.queue):
+            self.iter_index += 1
             if self.sort_by == "FIFO":
-                return self.queue[self.n-1]
-            return (self.queue.peekitem(self.n-1))[1]
+                return self.queue[self.iter_index-1]
+            
+            if  self.in_list_index < len(self.queue.peekitem(self.list_index)[1]):
+                self.in_list_index += 1
+                return (self.queue.peekitem(self.list_index))[1][self.in_list_index-1]
+            else:
+                self.list_index += 1
+                self.in_list_index = 0
+                return (self.queue.peekitem(self.list_index))[1][0]
         else:
             raise StopIteration
 
-    def put(self, proc: Process) -> None:
+    def put(self, proc: type[Process]) -> None:
         if self.sort_by == "FIFO":
             self.queue.append(proc)
 
@@ -109,7 +119,7 @@ class PriorityQueueWrapper:
         self.__init__(sort_by=sort_by)
 
         for i in temp:
-            for j in temp:
+            for j in i:
                 self.put(j)
 
         

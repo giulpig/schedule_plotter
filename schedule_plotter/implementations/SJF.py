@@ -41,6 +41,8 @@ def spn_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interac
             
             time_now += 1
 
+        
+
         if step == 0:
             break
 
@@ -48,18 +50,26 @@ def spn_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interac
         process = ready_queue.pop()
 
         # Run it by storing process lifetime (in queue and executing)
-        if process.id in out.keys():
+        if process.id in out:
             out[process.id][0].append((process.start, time_now))
             out[process.id][1].append((time_now, time_now+process.duration))
         else:
             out[process.id] = [(process.start, time_now)], [(time_now, time_now+process.duration)]
-
 
         wait_time += time_now-process.start
 
         time_now += process.duration
 
         step -= 1
+
+    # Add in_queue slices
+    for seq in (processes_copy, ready_queue):
+        for proc in seq:
+            if proc.start < time_now:
+                if proc.id in out:
+                    out[proc.id][0].append((proc.start, min(time_now, proc.start+proc.duration)))
+                else:
+                    out[proc.id] = [(proc.start, min(time_now, proc.start+proc.duration))], []
 
     if config.print_stats:
         print(f"Average wait time is {wait_time/len(processes)}")
@@ -100,11 +110,10 @@ def srt_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interac
         process = ready_queue.pop()
 
         # Run it by storing process lifetime (in queue and executing)
-        if process.id in out.keys():
-            out[process.id][0].append((process.start, time_now))
+        if process.id in out:
             out[process.id][1].append((time_now, time_now+1))
         else:
-            out[process.id] = [(process.start, time_now)], [(time_now, time_now+1)]
+            out[process.id] = [], [(time_now, time_now+1)]
 
 
         process.remaining_time -= 1
@@ -115,9 +124,23 @@ def srt_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interac
         if process.remaining_time > 0:
             ready_queue.put(process)
         else:
+            if process.id in out:
+                out[process.id][0].append((process.start, time_now-1))
+            else:
+                out[process.id] = [(process.start, time_now-1)], []
+
             wait_time += time_now-process.start-process.duration
 
         step -= 1
+
+    # Add in_queue slices
+    for seq in (processes_copy, ready_queue):
+        for proc in seq:
+            if proc.start < time_now:
+                if proc.id in out:
+                    out[proc.id][0].append((proc.start, time_now))
+                else:
+                    out[proc.id] = [(proc.start, time_now)], []
 
     if config.print_stats:
         print(f"Average wait time is {wait_time/len(processes)}")

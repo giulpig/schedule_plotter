@@ -14,13 +14,12 @@ __license__ = "GPLv3"
 import sys
 
 from schedule_plotter.Process import Process
-from schedule_plotter.plot_tools import plot_raw_data, plot
+from schedule_plotter.plot_tools import plot
 
 from schedule_plotter.implementations.FCFS import FCFS
 from schedule_plotter.implementations.SJF import SPN, SRT
 from schedule_plotter.implementations.RoundRobin import RoundRobin
 from schedule_plotter import config
-from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
 
 if __name__ == "__main__":
@@ -35,7 +34,7 @@ if __name__ == "__main__":
             raise Exception("Invalid filename")
 
     # Plot FCFS using test funciton
-    plot(FCFS, dataset, interactive=True)
+    plot(FCFS, dataset, interactive=False)
     print()
 
     # Plot SRT using test funciton
@@ -46,7 +45,4 @@ if __name__ == "__main__":
     plot(RoundRobin, dataset, interactive=True)
 
     # Direct plotting of SPN
-    print(f"Plotting {SPN.name} algorithm")
-    scheduled_data = SPN.function(dataset, PriorityQueueWrapper("rem_time"))
-    plot_raw_data(SPN.name, scheduled_data)
-    print()
+    plot(SPN, dataset, interactive=False)
