@@ -12,8 +12,6 @@ __license__ = "GPLv3"
 from collections import deque
 from sortedcontainers import SortedDict
 
-from numpy import sort
-
 from schedule_plotter.Process import Process
 
 
@@ -60,14 +58,31 @@ class PriorityQueueWrapper:
     def put(self, proc: Process) -> None:
         if self.sort_by == "FIFO":
             self.queue.append(proc)
+
         elif self.sort_by == "duration":
-            self.queue.update({proc.duration: proc})
+            if not proc.duration in self.queue:
+                self.queue.update({proc.duration: [proc]})
+            else:
+                self.queue[proc.duration].append(proc)
+
         elif self.sort_by == "rem_time":
-            self.queue.update({proc.remaining_time: proc})
+            if not proc.remaining_time in self.queue:
+                self.queue.update({proc.remaining_time: [proc]})
+            else:
+                self.queue[proc.remaining_time].append(proc)
+
         elif self.sort_by == "start":
-            self.queue.update({proc.start: proc})
+            if not proc.start in self.queue:
+                self.queue.update({proc.start: [proc]})
+            else:
+                self.queue[proc.start].append(proc)
+
         elif self.sort_by == "priority":
-            self.queue.update({proc.priority: proc})
+            if not proc.priority in self.queue:
+                self.queue.update({proc.priority: [proc]})
+            else:
+                self.queue[proc.priority].append(proc)
+
         else:
             raise Exception("invalid sorting criterion")
 
@@ -75,7 +90,11 @@ class PriorityQueueWrapper:
         if self.sort_by == "FIFO":
             return self.queue.popleft()
 
-        (_, out) = self.queue.popitem(0)
+        if len(self.queue.peekitem(0)[1]) == 1:
+            out = self.queue.popitem(0)[1][0]
+        else:
+            out = self.queue.peekitem(0)[1].pop()
+
         return out
 
     def set_sort_order(self, sort_by: str):
@@ -90,6 +109,7 @@ class PriorityQueueWrapper:
         self.__init__(sort_by=sort_by)
 
         for i in temp:
-            self.put(i)
+            for j in temp:
+                self.put(j)
 
         

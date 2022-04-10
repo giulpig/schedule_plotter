@@ -113,7 +113,7 @@ def srt_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interac
 
         # Re-insert it if it is not finished
         if process.remaining_time > 0:
-            processes_copy.append(process)
+            ready_queue.put(process)
         else:
             wait_time += time_now-process.start-process.duration
 

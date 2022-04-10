@@ -7,8 +7,6 @@
 __author__ = "giulpig"
 __license__ = "GPLv3"
 
-import queue
-from turtle import color
 import matplotlib
 import matplotlib.figure
 import matplotlib.pyplot as plt
@@ -55,7 +53,7 @@ class PlotUpdater:
         
         # Run algorithm against Process list to create scheduled data
         scheduled_data = self.algo.function(self.to_schedule, step=self._step, ready_queue=self.ready_queue)
-
+        
         yspan = len(scheduled_data)
         yplaces = [.5+i for i in range(yspan)]
         ylabels = sorted(scheduled_data.keys(), key=lambda name: int(name[1:]))
