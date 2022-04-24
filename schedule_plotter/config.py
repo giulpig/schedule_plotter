@@ -1,1 +1,1 @@
-print_stats = False
+print_stats = True

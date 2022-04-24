@@ -1,2 +1,0 @@
-- Appear/desappear bug
-- Add some extra statitics

@@ -18,10 +18,11 @@ from schedule_plotter import config
 
 
 
-def spn_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
+def spn_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1, switch_time: float = 0) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
     out = {}
     time_now = 0
     wait_time = 0
+    last_process = None
 
     processes_copy = deepcopy(processes)
 
@@ -41,13 +42,17 @@ def spn_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interac
             
             time_now += 1
 
-        
-
         if step == 0:
             break
 
         # Get the process
         process = ready_queue.pop()
+
+        # Add the context switch time if necessary
+        if process.id != last_process:
+            if last_process != None:
+                    time_now += switch_time
+            last_process = process.id
 
         # Run it by storing process lifetime (in queue and executing)
         if process.id in out:
@@ -80,10 +85,11 @@ SPN = Algorithm("ShortestProcessNext", spn_run)
 
 
 
-def srt_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
+def srt_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1, switch_time: float = 0) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
     out = {}
     time_now = 0
     wait_time = 0
+    last_process = None
     
     processes_copy = deepcopy(processes)
 
@@ -108,6 +114,12 @@ def srt_run(processes: List[Process], ready_queue: PriorityQueueWrapper, interac
 
         # Get the process
         process = ready_queue.pop()
+
+        # Add the context switch time if necessary
+        if process.id != last_process:
+            if last_process != None:
+                    time_now += switch_time
+            last_process = process.id
 
         # Run it by storing process lifetime (in queue and executing)
         if process.id in out:

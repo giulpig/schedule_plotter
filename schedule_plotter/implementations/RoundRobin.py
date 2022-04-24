@@ -17,10 +17,11 @@ from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 from schedule_plotter import config
 
 # See interface in Algoritm class
-def run(processes: List[Process], ready_queue: PriorityQueueWrapper, step: int = -1, quantum: int = 1) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
+def run(processes: List[Process], ready_queue: PriorityQueueWrapper, step: int = -1, switch_time: float = 0, quantum: int = 1) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
     out = {}
     time_now = 0
     wait_time = 0
+    last_process = None
 
     processes_copy = deepcopy(processes)
 
@@ -46,6 +47,12 @@ def run(processes: List[Process], ready_queue: PriorityQueueWrapper, step: int =
 
         # Get the process
         process = ready_queue.pop()
+
+        # Add the context switch time if necessary
+        if process.id != last_process:
+            if last_process != None:
+                    time_now += switch_time
+            last_process = process.id
 
         burst_time = min(quantum, process.remaining_time)
 

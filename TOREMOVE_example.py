@@ -34,15 +34,15 @@ if __name__ == "__main__":
             raise Exception("Invalid filename")
 
     # Plot FCFS using test funciton
-    plot(FCFS, dataset, interactive=False)
+    plot(FCFS, dataset, interactive=False, context_switch_time=0.5)
     print()
 
-    # Plot SRT using test funciton
-    plot(SRT, dataset, interactive=True)
+    # Plot SRT
+    plot(SRT, dataset, interactive=True, context_switch_time=0.5)
     print()
 
     # Plot RoundRobin
-    plot(RoundRobin, dataset, interactive=True)
+    plot(RoundRobin, dataset, interactive=True, context_switch_time=0.5)
 
     # Direct plotting of SPN
-    plot(SPN, dataset, interactive=False)
+    plot(SPN, dataset, interactive=False, context_switch_time=0.5)

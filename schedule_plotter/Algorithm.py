@@ -10,6 +10,7 @@ __license__ = "GPLv3"
 
 from typing import Dict, List, Tuple
 from schedule_plotter.Process import Process
+from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
 class Algorithm:
     def __init__(self, name: str, function):
@@ -17,7 +18,7 @@ class Algorithm:
         self.function = function
 
     # Dummy function for pseudo-interface for "function" argument
-    def run(processes: List[Process], interaction: bool = False) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
+    def run(processes: List[Process], ready_queue: PriorityQueueWrapper, interaction: bool = False, step: int = -1, switch_time: float = 0) -> Dict[str, Tuple[ List[Tuple[int, int]], List[Tuple[int, int]] ]]:
         """ 
         Interface for the scheduling algorithm function.
         
