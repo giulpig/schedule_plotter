@@ -42,7 +42,7 @@ if __name__ == "__main__":
     print()
 
     # Plot RoundRobin
-    plot(RoundRobin, dataset, interactive=True, context_switch_time=0.5)
+    plot(RoundRobin, dataset, interactive=True, context_switch_time=0, quantum=10)
 
     # Direct plotting of SPN
     plot(SPN, dataset, interactive=False, context_switch_time=0.5)

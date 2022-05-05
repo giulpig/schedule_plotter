@@ -25,7 +25,7 @@ from schedule_plotter.PriorityQueueWrapper import PriorityQueueWrapper
 
 class PlotUpdater:
 
-    def __init__(self, algo: Algorithm, data: List[Process], interactive, context_switch_time):
+    def __init__(self, algo: Algorithm, data: List[Process], interactive, context_switch_time, quantum):
         self.intercative = interactive
         if interactive:
             self._step = 0
@@ -33,6 +33,7 @@ class PlotUpdater:
             self._step = -1
 
         self.switch_time = context_switch_time
+        self.quantum = quantum
         self.to_schedule = data
         self.algo = algo
         self.buttons = ()
@@ -56,7 +57,10 @@ class PlotUpdater:
         self.ready_queue = PriorityQueueWrapper()
         
         # Run algorithm against Process list to create scheduled data
-        scheduled_data = self.algo.function(self.to_schedule, step=self._step, ready_queue=self.ready_queue, switch_time=self.switch_time)
+        if self.algo.name == "RoundRobin":
+            scheduled_data = self.algo.function(self.to_schedule, step=self._step, ready_queue=self.ready_queue, switch_time=self.switch_time, quantum=self.quantum)
+        else:
+            scheduled_data = self.algo.function(self.to_schedule, step=self._step, ready_queue=self.ready_queue, switch_time=self.switch_time)
         
         yspan = len(scheduled_data)
         yplaces = [.5+i for i in range(yspan)]
@@ -175,9 +179,9 @@ class PlotUpdater:
             
 
 # algo must be of Algorithm type and data must be an array of Processes
-def plot(algo: Algorithm, to_schedule: List[Process], interactive: bool = False, context_switch_time: float = 0) -> None:
+def plot(algo: Algorithm, to_schedule: List[Process], interactive: bool = False, context_switch_time: float = 0, quantum: int = 0) -> None:
     print(f"Plotting {algo.name} algorithm\n")
 
-    updater = PlotUpdater(algo, to_schedule, interactive, context_switch_time)
+    updater = PlotUpdater(algo, to_schedule, interactive, context_switch_time, quantum)
 
     plt.show()
